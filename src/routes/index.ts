@@ -1,7 +1,7 @@
-import express from 'express';
-import * as usersRoutes from './users.routes';
+import express from 'express'
+import * as usersRoutes from './users.routes'
 
-export const router = express.Router();
+export const router = express.Router()
 
-router.use('/', usersRoutes.router);
+router.use('/users', usersRoutes.router)
 

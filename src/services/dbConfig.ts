@@ -1,6 +1,7 @@
 import dotenv from 'dotenv'
-import { Pool } from "pg";
-dotenv.config();
+import { Pool } from 'pg'
+
+dotenv.config()
 export default new Pool({
     host: process.env.PG_HOST,
     user: process.env.PG_USER,
