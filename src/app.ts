@@ -1,7 +1,7 @@
 import express from 'express'
 const app = express()
 const port = 8000
-import { router } from './src/routes'
+import { router } from './routes'
 
 app.use(express.static('src'))
 app.use(express.json())
