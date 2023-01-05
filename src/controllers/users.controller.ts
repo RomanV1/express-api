@@ -4,14 +4,14 @@ import { IUser } from '../models/users.entity'
 import { RequestWithBody, RequestWithParams } from '../models/typedRequests'
 import { IUserBody } from '../models/users.interface'
 
-class UsersController {
-    // private usersService: UsersService
-    // constructor() {
-    //     this.usersService = new UsersService()
-    // }
+export class UsersController {
+    private usersService: UsersService
+    constructor() {
+        this.usersService = new UsersService()
+    }
     async getUsers(req: Request, res: Response) {
         try {
-            const users: IUser[] | undefined = await new UsersService().getUsers()
+            const users: IUser[] | undefined = await this.usersService.getUsers()
             if (users && users.length === 0) {
                 res.status(404).json({ error: 'Users is not found' })
                 return
@@ -75,4 +75,4 @@ class UsersController {
     }
 }
 
-export default new UsersController()
+// export default new UsersController()
