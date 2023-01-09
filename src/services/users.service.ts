@@ -33,7 +33,7 @@ export class UsersService {
         }
     }
 
-    async createUser(login: string, email: string, hash: string): Promise<void> {
+    async createUser(login: string, email: string, hash: string) {
         await this.pool.query<IUser[]>(`INSERT INTO users (login, email, hash) VALUES ($1, $2, $3)`, [login, email, hash])
     }
 

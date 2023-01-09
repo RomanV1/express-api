@@ -6,9 +6,11 @@ import { IUserBody } from '../models/users.interface'
 
 export class UsersController {
     private usersService: UsersService
+
     constructor() {
         this.usersService = new UsersService()
     }
+
     async getUsers(req: Request, res: Response) {
         try {
             const users: IUser[] | undefined = await this.usersService.getUsers()
@@ -74,5 +76,3 @@ export class UsersController {
         }
     }
 }
-
-// export default new UsersController()
