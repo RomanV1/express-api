@@ -24,37 +24,16 @@ describe('getUsers', () => {
         jest.clearAllMocks()
     })
 
-    it('should be called 1 times with params', async () => {
+    it('should be called 1 times with correct query', async () => {
         await new UsersService().getUsers()
         expect(pool.query).toBeCalledTimes(1)
         expect(pool.query).toBeCalledWith('SELECT id, login, email FROM users')
-        expect(pool.query)
-    })
-
-    it('getUserById', async () => {
-        await new UsersService().getUsers()
-        expect(pool.query).toBeCalledTimes(1)
-        expect(pool.query).toBeCalledWith('SELECT id, login, email FROM users WHERE id = ${id}')
-        expect(pool.query)
-    })
-
-    it('createUser', async () => {
-        await new UsersService().getUsers()
-        expect(pool.query).toBeCalledTimes(1)
-        expect(pool.query).toBeCalledWith('INSERT INTO users (login, email, hash) VALUES ($1, $2, $3)')
-        expect(pool.query)
-    })
-
-    it('isUniqueData', async () => {
-        await new UsersService().isUniqueData('roma', 'roma@yandex.ru')
-        expect(pool.query).toBeCalledTimes(1)
-        expect(pool.query).toBeCalledWith('SELECT login, email FROM users WHERE login = "${login}" OR email = "${email}"')
-        expect(pool.query)
     })
 })
 
 describe('getUsersById', () => {
     let pool: Pool
+    let id = '1'
     beforeEach(() => {
         pool = new Pool()
     })
@@ -63,21 +42,86 @@ describe('getUsersById', () => {
         jest.clearAllMocks()
     })
 
-    it('should be called 1 times with params', async () => {
-        await new UsersService().getUserById('1')
+    it('should be called 1 times with correct query', async () => {
+        await new UsersService().getUserById(id)
         expect(pool.query).toBeCalledTimes(1)
-        expect(pool.query).toBeCalledWith('SELECT id, login, email FROM users WHERE id = 1')
+        expect(pool.query).toBeCalledWith(`SELECT id, login, email FROM users WHERE id = ${id}`)
+    })
+})
+
+describe('isUserExist', () => {
+    let pool: Pool
+    let login = 'roman'
+    let email = 'roman@yandex.ru'
+    beforeEach(() => {
+        pool = new Pool()
     })
 
-    it('correct id', async () => {
-        await new UsersService().getUserById('22')
-        expect(pool.query).toBeCalledTimes(1)
-        expect(pool.query).toBeCalledWith('SELECT id, login, email FROM users WHERE id = 22')
+    afterEach(() => {
+        jest.clearAllMocks()
     })
 
-    it('incorrect id', async () => {
-        await new UsersService().getUserById('NaN')
+    it('should be called 1 times with correct query', async () => {
+        await new UsersService().isUserExist(login, email)
         expect(pool.query).toBeCalledTimes(1)
-        expect(pool.query).toBeCalledWith('SELECT id, login, email FROM users WHERE id = NaN')
+        expect(pool.query).toBeCalledWith(`SELECT login, email FROM users WHERE login = '${login}' OR email = '${email}'`)
+    })
+})
+
+describe('createUser', () => {
+    let pool: Pool
+    let login = 'roman'
+    let email = 'roman@yandex.ru'
+    let hash = '123asd123awsd'
+    beforeEach(() => {
+        pool = new Pool()
+    })
+
+    afterEach(() => {
+        jest.clearAllMocks()
+    })
+
+    it('should be called 1 times with correct query', async () => {
+        await new UsersService().createUser(login, email, hash)
+        expect(pool.query).toBeCalledTimes(1)
+        expect(pool.query).toBeCalledWith(`INSERT INTO users (login, email, hash) VALUES ($1, $2, $3)`, [login, email, hash])
+    })
+})
+
+describe('deleteUser', () => {
+    let pool: Pool
+    let id = '1'
+    beforeEach(() => {
+        pool = new Pool()
+    })
+
+    afterEach(() => {
+        jest.clearAllMocks()
+    })
+
+    it('should be called 1 times with correct query', async () => {
+        await new UsersService().deleteUser(id)
+        expect(pool.query).toBeCalledTimes(1)
+        expect(pool.query).toBeCalledWith(`DELETE FROM users WHERE id = ${id}`)
+    })
+})
+
+describe('updateUser', () => {
+    let pool: Pool
+    let id = '1'
+    let login = 'roman'
+    let email = 'roman@yandex.ru'
+    beforeEach(() => {
+        pool = new Pool()
+    })
+
+    afterEach(() => {
+        jest.clearAllMocks()
+    })
+
+    it('should be called 1 times with correct query', async () => {
+        await new UsersService().updateUser(id, login, email)
+        expect(pool.query).toBeCalledTimes(1)
+        expect(pool.query).toBeCalledWith(`UPDATE users SET login = '${login}', email = '${email}' WHERE id = ${id}`)
     })
 })
