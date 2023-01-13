@@ -1,10 +1,12 @@
 import { IUser } from '../models/users.entity'
 import { Pool } from 'pg'
 import dotenv from 'dotenv'
+
 dotenv.config()
 
 export class UsersService {
     private pool: Pool
+
     constructor() {
         this.pool = new Pool({
             host: process.env.PG_HOST,
@@ -33,16 +35,24 @@ export class UsersService {
         }
     }
 
+    async isUserExist(login: string, email: string): Promise<boolean | undefined> {
+        try {
+            const { rows } = await this.pool.query(`SELECT login, email FROM users WHERE login = '${login}' OR email = '${email}'`)
+            return rows.length !== 0
+        } catch (e) {
+            console.log('Error! Method: isUniqueData \n' + e)
+        }
+    }
+
     async createUser(login: string, email: string, hash: string) {
         await this.pool.query<IUser[]>(`INSERT INTO users (login, email, hash) VALUES ($1, $2, $3)`, [login, email, hash])
     }
 
-    async isUniqueData(login: string, email: string): Promise<boolean | undefined> {
-        try {
-            const { rows } = await this.pool.query(`SELECT login, email FROM users WHERE login = '${login}' OR email = '${email}'`)
-            return rows.length === 0
-        } catch (e) {
-            console.log('Error! Method: isUniqueData \n' + e)
-        }
+    async deleteUser(id: string) {
+        await this.pool.query<IUser[]>(`DELETE FROM users WHERE id = ${id}`)
+    }
+
+    async updateUser(id: string, login: string, email: string) {
+        await this.pool.query<IUser[]>(`UPDATE users SET login = '${login}', email = '${email}' WHERE id = ${id}`)
     }
 }
