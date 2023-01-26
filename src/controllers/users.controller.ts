@@ -1,6 +1,5 @@
 import { Request, Response } from 'express'
 import { UsersService } from '../services/users.service'
-import { IUser } from '../models/users.entity'
 import { RequestWithBody, RequestWithParams, RequestWithParamsAndBody } from '../models/typedRequests'
 import { IUserBody } from '../models/users.interface'
 
@@ -13,7 +12,7 @@ export class UsersController {
 
     async getUsers(req: Request, res: Response) {
         try {
-            const users: IUser[] | undefined = await this.usersService.getUsers()
+            const users = await this.usersService.getUsers()
             if (users && users.length === 0) {
                 res.status(404).json({ error: 'Users is not found' })
                 return
@@ -34,7 +33,7 @@ export class UsersController {
                 return
             }
 
-            const user: IUser[] | undefined = await this.usersService.getUserById(id)
+            const user = await this.usersService.getUserById(id)
             if (user && user.length === 0) {
                 res.status(404).json({ error: 'User is not found' })
                 return
@@ -55,7 +54,7 @@ export class UsersController {
                 return
             }
 
-            const isUserExist: boolean | undefined = await this.usersService.isUserExist(login, email)
+            const isUserExist = await this.usersService.isUserExist(login, email)
             if (isUserExist && typeof isUserExist !== 'undefined') {
                 res.status(400).json({ message: 'User is already exist. Change your login or email' })
                 return
@@ -89,7 +88,7 @@ export class UsersController {
             return
         }
 
-        const user: IUser[] | undefined = await this.usersService.getUserById(id)
+        const user = await this.usersService.getUserById(id)
         if (user?.length === 0) {
             res.status(400).json({ error: 'User deleted or not found' })
             return
@@ -121,7 +120,7 @@ export class UsersController {
             return
         }
 
-        const user: IUser[] | undefined = await this.usersService.getUserById(id)
+        const user = await this.usersService.getUserById(id)
         if (user?.length === 0) {
             res.status(400).json({ message: "User doesn't exist" })
             return

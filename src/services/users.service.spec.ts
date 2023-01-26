@@ -16,6 +16,7 @@ jest.mock('pg', () => {
 
 describe('getUsers', () => {
     let pool: Pool
+    
     beforeEach(() => {
         pool = new Pool()
     })
@@ -34,6 +35,7 @@ describe('getUsers', () => {
 describe('getUsersById', () => {
     let pool: Pool
     let id = '1'
+
     beforeEach(() => {
         pool = new Pool()
     })
@@ -53,6 +55,7 @@ describe('isUserExist', () => {
     let pool: Pool
     let login = 'roman'
     let email = 'roman@yandex.ru'
+
     beforeEach(() => {
         pool = new Pool()
     })
@@ -73,6 +76,7 @@ describe('createUser', () => {
     let login = 'roman'
     let email = 'roman@yandex.ru'
     let hash = '123asd123awsd'
+
     beforeEach(() => {
         pool = new Pool()
     })
@@ -91,6 +95,7 @@ describe('createUser', () => {
 describe('deleteUser', () => {
     let pool: Pool
     let id = '1'
+
     beforeEach(() => {
         pool = new Pool()
     })
@@ -111,6 +116,7 @@ describe('updateUser', () => {
     let id = '1'
     let login = 'roman'
     let email = 'roman@yandex.ru'
+
     beforeEach(() => {
         pool = new Pool()
     })
