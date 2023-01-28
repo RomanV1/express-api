@@ -34,7 +34,7 @@ export class UsersController {
             }
 
             const user = await this.usersService.getUserById(id)
-            if (user && user.length === 0) {
+            if (user?.length === 0) {
                 res.status(404).json({ error: 'User is not found' })
                 return
             }

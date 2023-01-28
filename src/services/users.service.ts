@@ -1,26 +1,24 @@
 import { IUser } from '../models/users.entity'
 import { Pool } from 'pg'
-import dotenv from 'dotenv'
-
-dotenv.config()
+import { ConfigService } from "../config/config.service";
 
 export class UsersService {
-    private pool: Pool
+    private readonly pool: Pool
 
     constructor() {
-        this.pool = new Pool({
-            host: process.env.PG_HOST,
-            user: process.env.PG_USER,
-            password: process.env.PG_PASSWORD,
-            database: process.env.PG_DATABASE,
-            idleTimeoutMillis: 3000
-        })
+        this.pool = new ConfigService().getDB()
     }
 
     async getUsers(): Promise<IUser[] | undefined> {
         try {
             const { rows } = await this.pool.query<IUser>('SELECT id, login, email FROM users')
-            return rows
+            return rows.map(el => {
+                return {
+                    id: el.id,
+                    login: el.login,
+                    email: el.email
+                }
+            })
         } catch (e) {
             console.log('Error! Method: getUsers \n' + e)
         }
@@ -29,7 +27,13 @@ export class UsersService {
     async getUserById(id: string): Promise<IUser[] | undefined> {
         try {
             const { rows } = await this.pool.query<IUser>(`SELECT id, login, email FROM users WHERE id = ${id}`)
-            return rows
+            return rows.map(el => {
+                return {
+                    id: el.id,
+                    login: el.login,
+                    email: el.email
+                }
+            })
         } catch (e) {
             console.log('Error! Method: getUserById \n' + e)
         }
