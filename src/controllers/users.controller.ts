@@ -13,6 +13,10 @@ export class UsersController {
     async getUsers(req: Request, res: Response) {
         try {
             const users = await this.usersService.getUsers()
+            if (users === undefined) {
+                res.status(500).json({ error: "Server's error" })
+                return
+            }
             if (users && users.length === 0) {
                 res.status(404).json({ error: 'Users is not found' })
                 return
@@ -34,6 +38,10 @@ export class UsersController {
             }
 
             const user = await this.usersService.getUserById(id)
+            if (user === undefined) {
+                res.status(500).json({ error: "Server's error" })
+                return
+            }
             if (user?.length === 0) {
                 res.status(404).json({ error: 'User is not found' })
                 return
@@ -55,12 +63,12 @@ export class UsersController {
             }
 
             const isUserExist = await this.usersService.isUserExist(login, email)
-            if (isUserExist && typeof isUserExist !== 'undefined') {
-                res.status(400).json({ message: 'User is already exist. Change your login or email' })
-                return
-            }
             if (typeof isUserExist === 'undefined') {
                 res.status(500).json({ error: "Server's error" })
+                return
+            }
+            if (isUserExist && typeof isUserExist !== 'undefined') {
+                res.status(400).json({ message: 'User is already exist. Change your login or email' })
                 return
             }
 
