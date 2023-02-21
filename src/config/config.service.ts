@@ -19,6 +19,7 @@ export class ConfigService implements IConfig {
     getDB(): Pool {
         return new Pool({
             host: this.config['PG_HOST'],
+            port: Number(this.config['PG_PORT']) || 55003,
             user: this.config['PG_USER'],
             password: this.config['PG_PASSWORD'],
             database: this.config['PG_DATABASE'],

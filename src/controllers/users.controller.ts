@@ -1,22 +1,20 @@
 import { Request, Response } from 'express'
 import { UsersService } from '../services/users.service'
 import { RequestWithBody, RequestWithParams, RequestWithParamsAndBody } from '../models/typedRequests'
-import { IUserBody } from '../models/users.interface'
+import { IUserBody } from '../models/user.interface'
+import { IUsersController } from "./users.controller.interface";
+import { IUsersService } from "../services/users.service.interface";
 
-export class UsersController {
-    private usersService: UsersService
+export class UsersController implements IUsersController {
+    private usersService: IUsersService
 
     constructor() {
         this.usersService = new UsersService()
     }
 
-    async getUsers(req: Request, res: Response) {
+    async getUsers(req: Request, res: Response): Promise<void> {
         try {
             const users = await this.usersService.getUsers()
-            if (users === undefined) {
-                res.status(500).json({ error: "Server's error" })
-                return
-            }
             if (users && users.length === 0) {
                 res.status(404).json({ error: 'Users is not found' })
                 return
@@ -25,11 +23,11 @@ export class UsersController {
             res.status(200).send(users)
         } catch (e) {
             res.status(500).json({ error: "Server's error" })
-            console.log('Error! Method: getUsers \n' + e)
+            console.log('Error! Method: getUsers \n', e)
         }
     }
 
-    async getUserById(req: RequestWithParams<{ id: string }>, res: Response) {
+    async getUserById(req: RequestWithParams<{ id: string }>, res: Response): Promise<void> {
         try {
             const { id } = req.params
             if (!Number(id)) {
@@ -38,10 +36,6 @@ export class UsersController {
             }
 
             const user = await this.usersService.getUserById(id)
-            if (user === undefined) {
-                res.status(500).json({ error: "Server's error" })
-                return
-            }
             if (user?.length === 0) {
                 res.status(404).json({ error: 'User is not found' })
                 return
@@ -50,7 +44,7 @@ export class UsersController {
             res.status(200).send(user)
         } catch (e) {
             res.status(500).json({ error: "Server's error" })
-            console.log('Error! Method: getUserById \n' + e)
+            console.log('Error! Method: getUserById \n', e)
         }
     }
 
@@ -63,91 +57,66 @@ export class UsersController {
             }
 
             const isUserExist = await this.usersService.isUserExist(login, email)
-            if (typeof isUserExist === 'undefined') {
-                res.status(500).json({ error: "Server's error" })
-                return
-            }
             if (isUserExist && typeof isUserExist !== 'undefined') {
                 res.status(400).json({ message: 'User is already exist. Change your login or email' })
                 return
             }
 
-            await this.usersService
-                .createUser(login, email, password)
-                .then(() => {
-                    res.status(201).json({ message: 'User has been created' })
-                    return
-                })
-                .catch((e) => {
-                    console.log(e)
-                    res.status(500).json({ error: "Server's error" })
-                    return
-                })
+            await this.usersService.createUser(login, email, password)
+            res.status(201).json({ message: 'User has been created' })
         } catch (e) {
             res.status(500).json({ error: "Server's error" })
-            console.log('Error! Method: createUser \n' + e)
+            console.log('Error! Method: createUser \n', e)
         }
     }
 
-    async deleteUser(req: RequestWithParams<{ id: string }>, res: Response) {
-        const { id } = req.params
-        if (!Number(id)) {
-            res.status(400).json({ error: 'Bad request' })
-            return
-        }
-
-        const user = await this.usersService.getUserById(id)
-        if (user?.length === 0) {
-            res.status(400).json({ error: 'User deleted or not found' })
-            return
-        }
-
-        await this.usersService
-            .deleteUser(id)
-            .then(() => {
-                res.status(201).json({ message: 'User has been deleted' })
+    async deleteUser(req: RequestWithParams<{ id: string }>, res: Response): Promise<void> {
+        try {
+            const { id } = req.params
+            if (!Number(id)) {
+                res.status(400).json({ error: 'Bad request' })
                 return
-            })
-            .catch((e) => {
-                console.log(e)
-                res.status(500).json({ error: "Server's error" })
+            }
+
+            const user = await this.usersService.getUserById(id)
+            if (user?.length === 0) {
+                res.status(400).json({ error: 'User is not found' })
                 return
-            })
-    }
+            }
 
-    async updateUser(req: RequestWithParamsAndBody<{ id: string }, IUserBody>, res: Response) {
-        const { id } = req.params
-        if (!Number(id)) {
-            res.status(400).json({ error: 'Bad request' })
-            return
-        }
-
-        const { login, email } = req.body
-        if (typeof login === 'undefined' || typeof email === 'undefined') {
-            res.status(400).json({ error: 'Bad request' })
-            return
-        }
-
-        const user = await this.usersService.getUserById(id)
-        if (user?.length === 0) {
-            res.status(400).json({ message: "User doesn't exist" })
-            return
-        }
-        if (typeof user === 'undefined') {
+            await this.usersService.deleteUser(id)
+            res.status(201).json({ message: 'User has been created' })
+        } catch(e) {
             res.status(500).json({ error: "Server's error" })
-            return
+            console.log('Error! Method: deleteUser \n', e)
         }
+    }
 
-        await this.usersService
-            .updateUser(id, login, email)
-            .then(() => {
-                res.status(201).json({ message: 'User has been updated' })
+    async updateUser(req: RequestWithParamsAndBody<{ id: string }, IUserBody>, res: Response): Promise<void> {
+        try {
+            const { id } = req.params
+            if (!Number(id)) {
+                res.status(400).json({ error: 'Bad request' })
                 return
-            })
-            .catch((e) => {
-                console.log(e)
-                res.status(500).json({ error: "Server's error" })
+            }
+
+            const { login, email } = req.body
+            if (typeof login === 'undefined' || typeof email === 'undefined') {
+                res.status(400).json({ error: 'Bad request' })
                 return
-            })
+            }
+
+            const user = await this.usersService.getUserById(id)
+            if (user?.length === 0) {
+                res.status(400).json({ message: "User doesn't exist" })
+                return
+            }
+
+            await this.usersService.updateUser(id, login, email)
+            res.status(201).json({ message: 'User has been created' })
+        } catch(e) {
+            res.status(500).json({ error: "Server's error" })
+            console.log('Error! Method: updateUser \n', e)
+        }
     }
 }

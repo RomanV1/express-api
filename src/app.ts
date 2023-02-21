@@ -1,5 +1,5 @@
 import express, { Application } from 'express'
-import { router } from './routes'
+import { router } from "./routes";
 
 export class Server {
     public app: Application
@@ -15,7 +15,7 @@ export class Server {
         this.app.use(router)
     }
 
-    start() {
+    run() {
         this.app.listen(this.port, (): void => {
             console.log('\x1b[35m%s\x1b[0m', `[server] running... \n[port] ${this.port}`)
         })
@@ -23,4 +23,4 @@ export class Server {
 }
 
 const server = new Server()
-server.start()
+server.run()
