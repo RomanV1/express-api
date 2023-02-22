@@ -58,7 +58,7 @@ export class UsersController implements IUsersController {
 
             const isUserExist = await this.usersService.isUserExist(login, email)
             if (isUserExist && typeof isUserExist !== 'undefined') {
-                res.status(400).json({ message: 'User is already exist. Change your login or email' })
+                res.status(409).json({ error: 'User is already exist. Change your login or email' })
                 return
             }
 
@@ -80,7 +80,7 @@ export class UsersController implements IUsersController {
 
             const user = await this.usersService.getUserById(id)
             if (user?.length === 0) {
-                res.status(400).json({ error: 'User is not found' })
+                res.status(404).json({ error: 'User is not found' })
                 return
             }
 
@@ -108,7 +108,7 @@ export class UsersController implements IUsersController {
 
             const user = await this.usersService.getUserById(id)
             if (user?.length === 0) {
-                res.status(400).json({ message: "User doesn't exist" })
+                res.status(409).json({ error: "User doesn't exist" })
                 return
             }
 
