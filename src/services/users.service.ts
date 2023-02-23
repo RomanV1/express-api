@@ -1,51 +1,62 @@
-import { IUser } from '../models/user.entity'
-import { Pool } from 'pg'
-import { ConfigService } from "../config/config.service";
-import { IUsersService } from "./users.service.interface";
+import { IUsersService } from './users.service.interface'
+import { PrismaClient, User } from '@prisma/client'
 
 export class UsersService implements IUsersService {
-    private readonly pool: Pool
+    private readonly prisma: PrismaClient
 
     constructor() {
-        this.pool = new ConfigService().getDB()
+        this.prisma = new PrismaClient()
     }
 
-    async getUsers(): Promise<IUser[]> {
-        const { rows } = await this.pool.query<IUser>('SELECT id, login, email FROM users')
-        return rows.map(el => {
-            return {
-                id: el.id,
-                login: el.login,
-                email: el.email
-            }
-        })
+    async getUsers(): Promise<User[]> {
+        return this.prisma.user.findMany()
     }
 
-    async getUserById(id: string): Promise<IUser[]> {
-        const { rows } = await this.pool.query<IUser>(`SELECT id, login, email FROM users WHERE id = ${id}`)
-        return rows.map(el => {
-            return {
-                id: el.id,
-                login: el.login,
-                email: el.email
-            }
+    async getUserById(id: string): Promise<User | null> {
+        return this.prisma.user.findFirst({
+            where: {
+                id: Number(id),
+            },
         })
     }
 
     async isUserExist(login: string, email: string): Promise<boolean> {
-        const { rows } = await this.pool.query<IUser>(`SELECT login, email FROM users WHERE login = '${login}' OR email = '${email}'`)
-        return rows.length !== 0
+        const user = await this.prisma.user.findFirst({
+            where: {
+                login: login,
+                email: email,
+            },
+        })
+        return user !== null
     }
 
     async createUser(login: string, email: string, hash: string): Promise<void> {
-        await this.pool.query<IUser>(`INSERT INTO users (login, email, hash) VALUES ($1, $2, $3)`, [login, email, hash])
+        await this.prisma.user.create({
+            data: {
+                login: login,
+                email: email,
+                hash: hash,
+            },
+        })
     }
 
     async deleteUser(id: string): Promise<void> {
-        await this.pool.query<IUser>(`DELETE FROM users WHERE id = ${id}`)
+        await this.prisma.user.delete({
+            where: {
+                id: Number(id),
+            },
+        })
     }
 
     async updateUser(id: string, login: string, email: string): Promise<void> {
-        await this.pool.query<IUser>(`UPDATE users SET login = '${login}', email = '${email}' WHERE id = ${id}`)
+        await this.prisma.user.update({
+            where: {
+                id: Number(id),
+            },
+            data: {
+                login: login,
+                email: email,
+            },
+        })
     }
 }

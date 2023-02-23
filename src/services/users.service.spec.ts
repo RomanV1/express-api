@@ -9,14 +9,14 @@ jest.mock('pg', () => {
         },
         query: jest.fn(),
         end: jest.fn(),
-        on: jest.fn()
+        on: jest.fn(),
     }
     return { Pool: jest.fn(() => mPool) }
 })
 
 describe('getUsers', () => {
     let pool: Pool
-    
+
     beforeEach(() => {
         pool = new Pool()
     })

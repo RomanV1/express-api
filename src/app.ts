@@ -1,9 +1,9 @@
 import express, { Application } from 'express'
-import { router } from "./routes";
+import { router } from './routes'
 
 export class Server {
     public app: Application
-    private readonly port: number;
+    private readonly port: number
 
     constructor() {
         this.app = express()

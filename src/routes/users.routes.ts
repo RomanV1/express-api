@@ -1,4 +1,4 @@
-import express, { Request } from "express";
+import express, { Request } from 'express'
 import { UsersController } from '../controllers/users.controller'
 import { RequestWithBody, RequestWithParams, RequestWithParamsAndBody } from '../models/typedRequests'
 import { IUserBody } from '../models/user.interface'
