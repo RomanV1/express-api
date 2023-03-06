@@ -85,7 +85,7 @@ export class UsersController implements IUsersController {
             }
 
             await this.usersService.deleteUser(id)
-            res.status(201).json({ message: 'User has been created' })
+            res.status(201).json({ message: 'User has been deleted' })
         } catch (e) {
             res.status(500).json({ error: "Server's error" })
             console.log('Error! Method: deleteUser \n', e)
@@ -113,7 +113,7 @@ export class UsersController implements IUsersController {
             }
 
             await this.usersService.updateUser(id, login, email)
-            res.status(201).json({ message: 'User has been created' })
+            res.status(201).json({ message: 'User has been updated' })
         } catch (e) {
             res.status(500).json({ error: "Server's error" })
             console.log('Error! Method: updateUser \n', e)
