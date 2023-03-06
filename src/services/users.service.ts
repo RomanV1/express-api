@@ -1,5 +1,5 @@
 import { IUsersService } from './users.service.interface'
-import { PrismaClient, User } from '@prisma/client'
+import { PrismaClient, User } from "@prisma/client";
 
 export class UsersService implements IUsersService {
     private readonly prisma: PrismaClient
@@ -23,9 +23,15 @@ export class UsersService implements IUsersService {
     async isUserExist(login: string, email: string): Promise<boolean> {
         const user = await this.prisma.user.findFirst({
             where: {
-                login: login,
-                email: email,
-            },
+                OR: [
+                    {
+                        login: login,
+                    },
+                    {
+                        email: email,
+                    }
+                ]
+            }
         })
         return user !== null
     }
