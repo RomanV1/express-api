@@ -33,21 +33,23 @@ describe('getUsersById', () => {
 
 describe('createUser', () => {
     it('should return 400 User is already exist', async () => {
-        const res = await request(app).post('/users').send({
-            login: 'user',
-            email: 'user@gmail.com',
-            password: '123123123',
-        })
+        const res = await request(app).post('/users')
+            .send({
+                login: 'user',
+                email: 'user@gmail.com',
+                password: '123123123',
+            })
         expect(res.statusCode).toBe(409)
         expect(res.body).toEqual({ error: 'User is already exist. Change your login or email' })
     })
 
     it('should return 400 Bad Request', async () => {
-        const res = await request(app).post('/users').send({
-            lo: 'user',
-            e: 'user@gmail.com',
-            pa: '123123123',
-        })
+        const res = await request(app).post('/users')
+            .send({
+                lo: 'user',
+                e: 'user@gmail.com',
+                pa: '123123123',
+            })
         expect(res.statusCode).toBe(400)
         expect(res.body).toEqual({ error: 'Bad Request' })
     })
